@@ -1,0 +1,14 @@
+BEGIN
+    FOR n := 1 TO 1000 DO BEGIN
+        FOR i := -5 TO 15 DO BEGIN
+            CASE i OF
+                2: ;
+                -4, -2, 0, 4, 6, 8, 10, 12: ;
+                -3, -1, 1, 3, 5, 7, 9, 11:  CASE i OF
+                                                -3, -1, 1, 9, 11: ;
+                                                2, 3, 5, 7:       ;
+                                            END
+            END
+        END
+    END
+END.

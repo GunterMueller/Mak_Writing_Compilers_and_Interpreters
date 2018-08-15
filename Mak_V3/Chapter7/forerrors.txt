@@ -1,0 +1,4 @@
+BEGIN {FOR syntax errors}
+    FOR i := 1, 10 DO five := 5;
+    FOR i = 10 DOWNTO 1 five = 5
+END.

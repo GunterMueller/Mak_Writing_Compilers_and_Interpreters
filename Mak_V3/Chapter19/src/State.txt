@@ -1,0 +1,30 @@
+import java.io.*;
+
+public class State
+{
+    private Scanner scanner;
+    private int matrix[][];
+    private int state;
+    
+    public State(Scanner scanner, int matrix[][])
+    {
+        this.scanner = scanner;
+        this.matrix = matrix;
+        this.state = 0;
+    }
+    
+    public int current()
+    {
+        return state;
+    }
+    
+    public void transit(int charType)
+    {
+        state = matrix[state][charType];
+    }
+ 
+    public boolean accept()
+    {
+        return state < 0;
+    }
+}

@@ -1,0 +1,10 @@
+BEGIN
+    REPEAT UNTIL five := 5;
+    REPEAT ratio := 9 UNTIL;
+
+    WHILE DO five := 5;
+    WHILE five = 5 five := 5 UNTIL ratio = 9;
+
+    FOR i = 1 TO 10 DO five = 5;
+    FOR i := 1, 10 DO five := 5;
+END.

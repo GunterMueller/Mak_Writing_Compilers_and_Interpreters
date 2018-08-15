@@ -1,0 +1,20 @@
+CONST
+    ten       = 10;
+    pi        = pi;
+    ch1       = -'y';
+
+TYPE
+    e  = (alpha, +ten, gamma)
+    sr = gamma..alpha;
+
+    ar3 = ARRAY [(fee, fye foe,, fum,) ten..pi, 'm' OF
+              ARRAY [sr] ar3;
+
+    rec = RECORD
+              ch : ;
+
+VAR
+    a,, a+2, : a;
+
+BEGIN
+END.

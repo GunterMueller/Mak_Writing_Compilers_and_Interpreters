@@ -1,0 +1,17 @@
+BEGIN
+    i := 0;
+    j := 0;
+    k := 0;
+
+    REPEAT
+        j := i;
+        k := i
+    UNTIL i <= j;
+
+    WHILE i > j DO k := i;
+
+    FOR k := j TO 5 DO n := k;
+
+    IF (i = j) THEN t := 200
+               ELSE f := -200;
+END.

@@ -1,0 +1,23 @@
+BEGIN
+    BEGIN
+        a := 0;
+        b := 0;
+        c := 0;
+        d := 0;
+        e := 0;
+        f := a + b + c + d + e;
+    END;
+
+    BEGIN
+        alpha := 10;
+        beta := 20
+    END;
+
+    gamma := 30;
+
+    BEGIN
+        alpha  := -88; 
+        beta   := 99;
+        result := alpha + 3/(beta - gamma) + 5;
+    END
+END.

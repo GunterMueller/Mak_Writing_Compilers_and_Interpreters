@@ -1,0 +1,38 @@
+CONST
+    ten       = 10;
+    pi        = 3.1415626;;;
+    ch        = 'x';
+    ch1       = -'y';
+    ch2       = +ch;
+    hello     = 'Hello, world.';
+
+TYPE
+    e  = (alpha+1, +ten, gamma);
+    ee = e END
+    sr = gamma..alpha;
+    cr = 'a'..foo;
+
+    ar  = ARRAY [1..ten OF integer;
+    ar1 = ARRAY [1..10] OF foo;
+    ar2 = ARRAY [e, sr,] OF pi;
+    ar3 = ARRAY [(fee, fye foe,, fum,) ten..pi] OF
+	      ARRAY [hello] OF ar3;
+    ar4 = ARRAY [e, 'm', 'r'] OF ar4;
+
+    rec = RECORD
+	      i  : integer
+	      r  : ten;
+	      x  : i;
+	      ch :
+	  END;
+
+VAR
+    length, width : hello;
+    radius circumference : 10;
+    b      : +boolean;
+    letter : 'a'..10;
+    i      : integer END;
+    r      : rec..sr;
+    buffer : ARRAY [1..maxlength] OF buffer;;;
+    a,,aa, : ar
+    a1+2   : ar1;

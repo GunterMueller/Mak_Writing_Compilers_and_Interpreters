@@ -1,0 +1,128 @@
+import java.io.*;
+
+public class Scanner
+{
+    static private final int LETTER = 0;
+    static private final int DIGIT  = 1;
+    static private final int PLUS   = 2;
+    static private final int MINUS  = 3;
+    static private final int DOT    = 4;
+    static private final int E      = 5;
+    static private final int OTHER  = 6;
+    
+    static final int matrix[][] = {  // state transition matrix
+            
+        /*        letter digit   +    -    .    E other */
+        /*  0 */ {   1,    4,    3,   3,   0,   1,   0 },
+        /*  1 */ {   1,    1,   -2,  -2,  -2,   1,  -2 },
+        /*  2 */ {   0,    0,    0,   0,   0,   0,   0 },
+        /*  3 */ {   0,    4,    0,   0,   0,   0,   0 },
+        /*  4 */ {  -5,    4,   -5,  -5,   6,   9,  -5 },  
+        /*  5 */ {   0,    0,    0,   0,   0,   0,   0 },
+        /*  6 */ {   0,    7,    0,   0,   0,   0,   0 },
+        /*  7 */ {  -8,    7,   -8,  -8,  -8,   9,  -8 },
+        /*  8 */ {   0,    0,    0,   0,   0,   0,   0 },  
+        /*  9 */ {   0,   11,   10,  10,   0,   0,   0 }, 
+        /* 10 */ {   0,   11,    0,   0,   0,   0,   0 },
+        /* 11 */ { -12,   11,  -12, -12, -12, -12, -12 },
+        /* 12 */ {   0,    0,    0,   0,   0,   0,   0 },
+    };
+    
+    private BufferedReader reader;
+    private String line = null;
+    private int lineNumber = 0;
+    private int linePos = -1;
+    private char ch;
+    private State state;
+    
+    public Scanner(String sourcePath)
+    {
+        try {
+            reader = new BufferedReader(new FileReader(sourcePath));
+        }
+        catch(IOException ex) {
+            ex.printStackTrace();
+            System.exit(-1);
+        }
+    }
+    
+    int typeOf(char ch)
+    {
+        return   (ch == 'E')            ? E
+               : Character.isLetter(ch) ? LETTER
+               : Character.isDigit(ch)  ? DIGIT
+               : (ch == '+')            ? PLUS
+               : (ch == '-')            ? MINUS
+               : (ch == '.')            ? DOT
+               :                          OTHER;        
+    }
+    
+    void nextChar()
+        throws IOException
+    {
+        if ((line == null) || (++linePos >= line.length())) {
+            line = reader.readLine();
+            
+            if (line != null) {
+                System.out.println("[" + ++lineNumber + "] " + line);
+                line += " ";
+                linePos = 0;
+                ch = line.charAt(0);
+            }
+            else ch = 0;
+        }
+        else {
+            ch = line.charAt(linePos);
+        }
+    }
+    
+    private String nextToken()
+        throws IOException
+    {
+        while (Character.isWhitespace(ch)) nextChar();
+        if (ch == 0) return null;
+        
+        state = new State(this, matrix);
+        StringBuilder buffer = new StringBuilder();
+        
+        while (!state.accept()) {
+            state.transit(typeOf(ch));
+            
+            if (!state.accept()) {
+                buffer.append(ch);
+                nextChar();
+            }
+        }
+        
+        return buffer.toString();
+    }
+    
+    private void scan()
+        throws IOException
+    {
+        nextChar();
+        
+        while (ch != 0) {
+            String token = nextToken();
+            
+            if (token != null) {
+                System.out.print("=====> \"" + token + "\" ");
+                int currentState = state.current();
+                String tokenType =   
+                      (currentState ==  -2) ? "IDENTIFIER"
+                    : (currentState ==  -5) ? "INTEGER"
+                    : (currentState ==  -8) ? "REAL (fraction only)" 
+                    : (currentState == -12) ? "REAL"
+                    :                         "*** ERROR ***";
+                System.out.println(tokenType);
+            }
+        }
+    }
+
+    public static void main(String[] args)
+        throws Exception
+    {
+        Scanner scanner = new Scanner(args[0]);
+        scanner.scan();
+    }
+}

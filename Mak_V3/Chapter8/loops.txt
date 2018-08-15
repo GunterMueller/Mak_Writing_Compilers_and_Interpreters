@@ -1,0 +1,31 @@
+BEGIN
+    BEGIN {Calculate a square root using Newton's method.}
+        number := 4;
+        root := number;
+
+        REPEAT
+            root := (number/root + root)/2
+        UNTIL root*root - number < 0.000001
+    END;
+
+    BEGIN {Calculate a square root using Newton's method.}
+        number := 2;
+        root := number;
+
+        WHILE root*root - number > 0.000001 DO BEGIN
+            root := (number/root + root)/2
+        END
+    END;
+
+    FOR i := 1 TO 5 DO BEGIN
+        j := i;
+    END;
+
+    FOR k := j DOWNTO 1 DO n := k;
+
+    FOR i := 1 TO 2 DO BEGIN
+        FOR j := 1 TO 3 DO BEGIN
+            k := i*j
+        END
+    END
+END.

@@ -1,0 +1,333 @@
+package wci.ide.ideimpl;
+
+import java.util.HashSet;
+import java.io.*;
+import java.awt.*;
+
+import wci.ide.IDEControl;
+
+import static wci.backend.interpreter.Debugger.*;
+import static wci.ide.IDEControl.*;
+
+/**
+ * <h1>InterpreterProcess</h1>
+ *
+ * <p>The interpreter process of the Pascal IDE.</p>
+ *
+ * <p>Copyright (c) 2009 by Ronald Mak</p>
+ * <p>For instructional purposes only.  No warranties.</p>
+ */
+public class InterpreterProcess extends Thread
+{
+    private IDEControl control;
+    private Process process;
+    private String sourceName;
+    private PrintWriter interpreterWriter;
+    private InterpreterOutput interpreterOutput;
+
+    private static final HashSet TAG_SET = new HashSet();
+
+    static {
+        TAG_SET.add(LISTING_TAG);
+        TAG_SET.add(PARSER_TAG);
+        TAG_SET.add(SYNTAX_TAG);
+        TAG_SET.add(INTERPRETER_TAG);
+    }
+
+    /**
+     * Constructor.
+     * @param control the IDE control.
+     * @param sourceName the source file name.
+     */
+    public InterpreterProcess(IDEControl control, String sourceName)
+    {
+        this.control = control;
+        this.sourceName = sourceName;
+    }
+
+    private static final String COMMAND =
+                                "java -classpath classes Pascal execute %s %s";
+
+    /**
+     * Run the procecess.
+     */
+    public void run()
+    {
+        try {
+            // Start the Pascal interpreter.
+            String command = String.format(COMMAND, control.getSourcePath(),
+                                                    control.getInputPath());
+            process = Runtime.getRuntime().exec(command);
+
+            // Capture the interpreter's input and output streams.
+            interpreterOutput = new InterpreterOutput(process);
+            interpreterWriter = new PrintWriter(process.getOutputStream());
+
+            // Dispatch interpreter output for processing.
+            dispatchInterpreterOutput();
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Kill the interpreter process.
+     */
+    public void kill()
+    {
+        if (process != null) {
+            process.destroy();
+            process = null;
+        }
+    }
+
+    /**
+     * Dispatch interpreter output for processing.
+     * @throws Exception if an error occurred.
+     */
+    private void dispatchInterpreterOutput()
+        throws Exception
+    {
+        String text;
+        boolean haveSyntaxErrors = false;
+
+        do {
+            text = interpreterOutput.next();
+            //System.out.println("Read: '" + text + "'");
+
+            int index = text.indexOf('!');
+
+            if (index > 0) {
+                control.addToConsoleOutput(text.substring(0, index));
+                text = text.substring(index);
+            }
+
+            if (text.startsWith(LISTING_TAG)) {
+                control.addToDebuggerListing(text.substring(LISTING_TAG.length()));
+            }
+            else if (text.startsWith(SYNTAX_TAG)) {
+                String errorMessage = text.substring(SYNTAX_TAG.length());
+                control.addToEditorErrors(errorMessage);
+                haveSyntaxErrors = true;
+            }
+            else if (text.startsWith(PARSER_TAG)) {
+                control.setEditorMessage(text.substring(PARSER_TAG.length()),
+                                           haveSyntaxErrors ? Color.RED
+                                                            : Color.BLUE);
+
+                if (!haveSyntaxErrors) {
+                    control.clearEditorErrors();
+                    control.setDebuggerMessage("", Color.BLUE);
+                    control.showDebugger(sourceName);
+                    control.showCallStack(sourceName);
+                    control.showConsole(sourceName);
+                }
+                else {
+                    control.setDebuggerMessage("Fix syntax errors.",
+                                                 Color.RED);
+                    control.stopDebugger();
+                    control.disableConsoleInput();
+                }
+            }
+            else if (text.startsWith(DEBUGGER_AT_TAG)) {
+                String lineNumber = text.substring(DEBUGGER_AT_TAG.length());
+                control.setDebuggerAtListingLine(Integer.parseInt(lineNumber.trim()));
+                control.setDebuggerMessage(" ", Color.BLUE);
+            }
+            else if (text.startsWith(DEBUGGER_BREAK_TAG)) {
+                String lineNumber = text.substring(DEBUGGER_BREAK_TAG.length());
+                control.breakDebuggerAtListingLine(Integer.parseInt(lineNumber.trim()));
+                control.setDebuggerMessage("Break at text " + lineNumber,
+                                             Color.BLUE);
+            }
+            else if (text.startsWith(DEBUGGER_ROUTINE_TAG)) {
+                String components[] = text.split(":");
+                String level = components[1].trim();
+
+                if (level.equals("-1")) {
+                    control.initializeCallStack();
+                }
+                else if (level.equals("-2")) {
+                    control.completeCallStack();
+                }
+                else {
+                    String header = components[2].trim();
+                    control.addRoutineToCallStack(level, header);
+                }
+            }
+            else if (text.startsWith(DEBUGGER_VARIABLE_TAG)) {
+                String components[] = text.split(":");
+                String name = components[1].trim();
+                String value = components[2].trim();
+
+                control.addVariableToCallStack(name, value);
+            }
+            else if (text.startsWith(INTERPRETER_TAG)) {
+                control.setDebuggerMessage(
+                    text.substring(INTERPRETER_TAG.length()), Color.BLUE);
+                control.stopDebugger();
+                control.disableConsoleInput();
+            }
+            else {
+                control.addToConsoleOutput(text);
+            }
+        }
+        while (!text.startsWith(INTERPRETER_TAG));
+    }
+
+    /**
+     * Send a command or runtime input text to the interpreter.
+     * @param text the command string or input text.
+     */
+    public void sendToInterpreter(String text)
+    {
+        synchronized(InterpreterProcess.class) {
+            interpreterWriter.println(text);
+            interpreterWriter.flush();
+
+            //System.out.println("Sent: '" + text + "'");
+        }
+    }
+
+    /**
+     * Output from the interpreter.
+     */
+    private class InterpreterOutput
+    {
+        private static final int BUFFER_SIZE = 1024;
+
+        private BufferedReader interpreterReader; // reader of the output
+        private char buffer[]; // output buffer
+        private int start; // start of output line
+        private int index; // index of \n or end of line
+        private int length; // line length
+        private int prevIndex; // previous index
+
+        /**
+         * Constructor.
+         * @param process the interpreter process.
+         */
+        private InterpreterOutput(Process process)
+        {
+            interpreterReader = new BufferedReader(
+                new InputStreamReader(
+                    process.getInputStream()));
+            buffer = new char[BUFFER_SIZE];
+            start = 0;
+            length = 0;
+        }
+
+        /**
+         * Get the next complete or partial output line.
+         * @return the output line.
+         * @throws Exception if an error occurred.
+         */
+        private String next()
+            throws Exception
+        {
+            // Loop forever to process output from the interpreter.
+            for (; ; ) {
+                Thread.sleep(1);
+                index = findEnd(prevIndex);
+
+                // Found '\n': Return the line.
+                if (buffer[index] == '\n') {
+                    String output = new String(buffer, start,
+                                               index - start + 1);
+                    start = index + 1;
+                    prevIndex = start;
+                    //System.err.println("Output: '" + output + "'");
+                    return output;
+                }
+
+                // Found '!': Return the partial line. The rest of the output
+                //            may be the start of an output tag.
+                //
+                else if (buffer[index] == '!') {
+                    String output = new String(buffer, start,
+                                               index - start);
+                    start = index;
+                    prevIndex = start;
+                    //System.err.println("Output: '" + output + "'");
+                    return output;
+                }
+
+                // At end of buffer.
+                else if (index == BUFFER_SIZE) {
+
+                    // Partial line fills buffer: Return the buffer contents.
+                    if (start == 0) {
+                        String output = new String(buffer);
+                        start = 0;
+                        length = 0;
+                        prevIndex = 0;
+                        //System.err.println("Output: '" + output + "'");
+                        return output;
+                    }
+
+                    // Shift the last partial line to the buffer's left end
+                    // to prepare for possibly more reading.
+                    else {
+                        shift();
+                    }
+                }
+
+                // Partial line or new line: Read more if available.
+                if (interpreterReader.ready()) {
+                    prevIndex = length;
+                    length += interpreterReader.read(buffer, prevIndex,
+                                                     BUFFER_SIZE - prevIndex);
+                }
+
+                // No more to read: Return any partial line.
+                else if (start < length) {
+                    String output = new String(buffer, start, length - start);
+                    start = 0;
+                    length = 0;
+                    prevIndex = 0;
+                    //System.err.println("Output: '" + output + "'");
+                    return output;
+                }
+
+                // No more to read: Reset the buffer and loop until there is
+                //                  something to read.
+                else {
+                    start = 0;
+                    length = 0;
+                    prevIndex = 0;
+                }
+            }
+        }
+
+        /**
+         * Look for the next end of line in the output.
+         * @param i index of where to start looking.
+         * @return the index of the end of line or the end of output.
+         */
+        private int findEnd(int i)
+        {
+            while ((i < length) && (buffer[i] != '\n')
+                       && ((buffer[i] != '!') || (index == start))) {
+                ++i;
+            }
+
+            return i;
+        }
+
+        /**
+         * Shift the remaining contents to the buffer's left end
+         * to prepare for possibly more reading.
+         */
+        private void shift()
+        {
+            for (int i = start; i < BUFFER_SIZE; ++i) {
+                buffer[i - start] = buffer[i];
+            }
+
+            length = BUFFER_SIZE - start;
+            start = 0;
+            prevIndex = length;
+        }
+    }
+}

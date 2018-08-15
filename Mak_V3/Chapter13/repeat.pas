@@ -1,0 +1,15 @@
+PROGRAM RepeatTest;
+
+VAR
+    number : integer;
+    root, partial : real;
+
+BEGIN {Calculate the square root of 4 using Newton's method.}
+    number := 4;
+    root := number;
+
+    REPEAT
+        partial := number/root + root;
+        root := partial/2
+    UNTIL root*root - number < 0.000001
+END.
