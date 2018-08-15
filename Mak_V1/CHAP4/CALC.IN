@@ -1,0 +1,14 @@
+{Square root of 4096 by Newton's algorithm.}
+
+number := 4096;
+root := 1;
+
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;

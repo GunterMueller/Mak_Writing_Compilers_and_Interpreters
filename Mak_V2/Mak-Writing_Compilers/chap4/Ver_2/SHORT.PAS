@@ -1,0 +1,3 @@
+PROGRAM short;
+BEGIN
+END.

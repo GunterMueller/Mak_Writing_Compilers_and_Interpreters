@@ -1,0 +1,15 @@
+{Temperature conversions.}
+
+ratio := 5/9;
+
+fahrenheit := 68;
+centigrade := (fahrenheit - 32)*ratio;
+
+centigrade := 20;;;
+fahrenheit := centigrade/ratio + 32;
+
+centigrade := 25
+fahrenheit := celsius/ratio + 32;
+
+dze ratio/(ratio - ratio) := ;
+.

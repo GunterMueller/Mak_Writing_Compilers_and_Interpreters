@@ -1,0 +1,4 @@
+{This is a comment
+ that spans two lines.}
+
+Two{comments in}{a row}here.

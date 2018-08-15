@@ -1,0 +1,5 @@
+{Division by zero.}
+BEGIN
+    ratio := 5/9;
+    dze := ratio/(ratio - ratio);
+END.

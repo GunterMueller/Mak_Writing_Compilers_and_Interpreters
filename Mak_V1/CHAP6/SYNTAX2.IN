@@ -1,0 +1,42 @@
+CONST
+    ten   = 10;
+    pi    = 3.14159.26;
+    ch    = 'x';
+    hello   'Hello, world.';
+
+TYPE
+    e  = (alpha, beta, gamma);
+    ee = e;
+    sr = alpha..gamma
+    cr = 'a'..ch;
+
+    ar1 = ARRAY [1..ten] OF integer;
+    ar2 = ARRAY [e, sr OF real;
+    ar3 = ARRAY [(fee, fye, foe, fum), sr] ARRAY [ee] boolean;
+
+    rec = RECORD
+	      i, j, k : integer;
+	      x  : real;
+	      ch : char;
+	      a    ARRAY [sr] OF e;
+	  END;
+
+VAR
+    radius, circumference : real;
+    b      : boolean;
+    letter : 'a'..'z'
+    greek  : e;
+    list   : ar1;
+    a2     : ar2;
+    a3     : ar3;
+    thing  : rec;
+
+BEGIN
+    radius := (circumference/pi/2;
+    b := ten*radius >= thing.x;
+    greek := thing.a[beta];
+    a2[alpha, gamma] := a2[beta][alpha];
+    b := a3[foe, alpha, beta] - pi;
+    a3[fye] := a3[7];
+    thing.what := list[ten, 7, 3];
+END

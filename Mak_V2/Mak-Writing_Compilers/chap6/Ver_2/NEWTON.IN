@@ -1,0 +1,21 @@
+BEGIN
+    epsilon := 1e-12;
+    maxiter := 20;
+
+    REPEAT
+	number := input;
+
+	count  := 0;
+	root   := number;
+	
+	REPEAT
+	    prev   := root;
+	    root   := (number/root + root)/2;
+	    output := root;
+	    
+	    test   := (prev - root)/root;  {relative difference}
+	    test   := test*test;           {so always positive}
+	    count  := count + 1;
+	UNTIL (test < epsilon) OR (count >= maxiter)
+    UNTIL number = 1
+END.

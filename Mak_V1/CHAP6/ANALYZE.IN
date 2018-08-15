@@ -1,0 +1,35 @@
+CONST
+    ten       = 10;
+    hundred   = 100;
+    maxlength = 80;
+    pi        = 3.1415626;
+    ch        = 'x';
+    hello     = 'Hello, world.';
+
+TYPE
+    e  = (alpha, beta, gamma);
+    ee = e;
+    sr = alpha..gamma;
+    cr = 'a'..ch;
+
+    ar  = ARRAY [1..ten] OF integer;
+    ar1 = ARRAY [1..10] OF integer;
+    ar2 = ARRAY [e, sr] OF real;
+    ar3 = ARRAY [(fee, fye, foe, fum), ten..hundred] OF
+	      ARRAY [ee] OF boolean;
+    ar4 = ARRAY [boolean, 'm'..'r'] OF char;
+
+    rec = RECORD
+	      i  : integer;
+	      x  : real;
+	      ch : char;
+	  END;
+
+VAR
+    length, width : integer;
+    radius, circumference : real;
+    b      : boolean;
+    letter : 'a'..'z';
+    buffer : ARRAY [1..maxlength] OF char;
+    table  : ARRAY [ee, 1..5] OF rec;
+

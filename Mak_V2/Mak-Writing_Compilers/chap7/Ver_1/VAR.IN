@@ -1,0 +1,11 @@
+VAR
+    i, j    : integer;
+    a, b, c : real;
+    p, q    : boolean;
+    ch      : char;
+    teens   : 11..19;
+    yyy     : ARRAY[boolean] of real;
+    zzz     : RECORD
+		  alpha: integer;
+		  beta:  real
+	      END;

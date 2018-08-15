@@ -1,0 +1,11 @@
+CONST
+    radius = 7;
+    pi     = 3.14159;
+    x      = -56.2e-12;
+
+    ch     = 'q';
+    msg    = 'Area of circle.';
+
+    rad    = radius;
+    y      = -x;
+    z      = -msg;

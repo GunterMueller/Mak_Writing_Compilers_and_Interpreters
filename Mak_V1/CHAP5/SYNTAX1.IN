@@ -1,0 +1,18 @@
+BEGIN
+    alpha := beta - gamma;
+
+    IF alpha <> theta THEN BEGIN
+        area := length*width
+	volume := area*height + ;
+    END
+    ELSE x := ((a - b/c) MOD f;
+
+    CASE switch OF
+        one, 2, three: z := -123.45;
+
+	four, -'5':  BEGIN
+	    n := n + 1;
+	    k := k - 1;
+	END
+    END
+

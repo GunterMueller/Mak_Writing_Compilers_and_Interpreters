@@ -1,0 +1,24 @@
+BEGIN
+    alpha := beta - gamma;
+
+    IF alpha <> theta THEN BEGIN
+	area := length*width
+	volume := area*height        +
+    END
+    ELSE x := ((a - b/c) MOD f;
+
+    REPEAT
+	a := b;
+	b := c
+    UNTIL *c;
+
+    FOR a := 1 4 DOWNTO b DO TO WHILE NOT a DO;
+
+    CASE switch OF
+	one, 2, 3.3, '44': z := -123.45;
+
+	'5', -'6':  BEGIN
+	    n := n + 1;
+	    k := k - 1;
+	END
+    END

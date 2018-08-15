@@ -1,0 +1,15 @@
+{Square roots by Newton's algorithm.}
+
+number := input;
+root   := number;
+
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+root := (number/root + root)/2;  output := root;
+.
